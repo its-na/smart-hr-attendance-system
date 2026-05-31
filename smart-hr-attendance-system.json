@@ -1,0 +1,1239 @@
+{
+  "name": "smart-hr-attendance-system",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -176,
+        432
+      ],
+      "id": "b18882aa-2d7e-477f-8eff-d92a79262710",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "919434b3-fea9-4e0f-81c4-bcc4c9f901f5",
+                    "leftValue": "={{ $('Trigger: Telegram Chat').item.json.callback_query?.data || $('Trigger: Telegram Chat').item.json.message?.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Trigger: Telegram Chat').item.json.callback_query?.data || $('Trigger: Telegram Chat').item.json.message?.text }}",
+                    "rightValue": "/absen",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "42b10e05-1f2e-4910-902e-925c70eb047b"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d117a179-2e67-4964-b75d-f5b3feb1a154",
+                    "leftValue": "={{ $('Trigger: Telegram Chat').item.json.callback_query?.data || $('Trigger: Telegram Chat').item.json.message?.text }}",
+                    "rightValue": "absen_masuk",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f67d3d43-0dca-43fe-bd9b-41736dab0ac5",
+                    "leftValue": "={{ $('Trigger: Telegram Chat').item.json.callback_query?.data || $('Trigger: Telegram Chat').item.json.message?.text }}",
+                    "rightValue": "absen_izin",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "887e524e-3a56-4b36-a466-1afd02bc0b3e",
+                    "leftValue": "={{ $('Trigger: Telegram Chat').item.json.message?.text }}",
+                    "rightValue": "Alasan:",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5d6ba93b-5a17-44d5-b7dc-52f619205f2a",
+                    "leftValue": "={{ $('Trigger: Telegram Chat').item.json.callback_query?.data || $('Trigger: Telegram Chat').item.json.message?.text }}",
+                    "rightValue": "/absen",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        -160
+      ],
+      "id": "ca78bddc-2056-43ea-b699-f89b19a0fdcf",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        432
+      ],
+      "id": "e31a7ac5-0dcf-4be7-b9f8-59c049aeb079",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yMLGRHK5eWSOVRTN",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1104,
+        64
+      ],
+      "id": "18548470-a618-4cb9-8436-7a69e608db30",
+      "name": "Trigger: Telegram Chat",
+      "webhookId": "0b3cbadc-7c33-48aa-858b-d7ef0edc48b8",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ",
+          "mode": "list",
+          "cachedResultName": "Data_Absensi_Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 790484842,
+          "mode": "list",
+          "cachedResultName": "Daftar Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit#gid=790484842"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Telegram ID",
+              "lookupValue": "={{ $json.message?.from?.id || $json.callback_query?.from?.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -912,
+        64
+      ],
+      "id": "00f34b3b-8f47-4be1-91b7-aeb976bacf29",
+      "name": "GSheets: Cek Akses Karyawan",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qXlHnoXu337mGj9T",
+          "name": "Google Sheets OAuth2 API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "Aktif",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9867c63b-d2c3-4521-8427-f3b937a0dcee"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        64
+      ],
+      "id": "bdccb0dc-9db9-499b-a822-c405b62038f8",
+      "name": "Switch: Cek Registrasi"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id }}",
+        "text": "=⚠️ AKSES DITOLAK! \n\nMaaf, akun Telegram Anda belum terdaftar sebagai karyawan resmi di JadiMaju.\n\nKirimkan ID Telegram Anda di bawah ini ke Tim HRD / Admin untuk proses pendaftaran:\n👉 ID Anda: {{ $('Trigger: Telegram Chat').item.json.message?.from?.id || $('Trigger: Telegram Chat').item.json.callback_query?.from?.id }}\n\nJika ID di atas sudah didaftarkan oleh HRD, silakan ketik /start kembali untuk masuk ke sistem.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -528,
+        192
+      ],
+      "id": "fadfcc3d-0beb-4751-a3d8-e2af7acfe424",
+      "name": "Telegram: Notif Akses Ditolak",
+      "webhookId": "d17251c9-5439-4a27-90a2-59317638f62c",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id }}",
+        "text": "Selamat datang di Asisten Virtual Cerdas! 👋 Saya siap membantu Anda menjawab berbagai macam pertanyaan, berdiskusi, hingga mempermudah administrasi harian Anda.\n\nBerikut adalah fitur utama yang bisa Anda gunakan:\n📇 PENCATATAN ABSENSI DIGITAL\nKetik perintah /absen untuk memunculkan tombol kehadiran harian (Masuk atau Izin).\n🤖 ASISTEN AI MULTIFUNGSI\nSelain untuk absensi, Anda bebas mengobrol dan menanyakan apa saja kepada saya di luar jam kerja. Saya bisa membantu Anda untuk: • Mencari ide kreatif, tips, atau resep masakan.\n• Membuat draf tulisan, email, maupun teks pengajuan resmi.\n• Menerjemahkan bahasa atau merangkum informasi panjang.\n\nSilakan ketik /absen untuk memulai kehadiran, atau langsung kirimkan pesan/pertanyaan Anda di bawah ini! 🚀",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        -384
+      ],
+      "id": "46dcc6d7-aab1-4e21-9a31-cae9398353f1",
+      "name": "Telegram: Menu Utama",
+      "webhookId": "e39a1a3e-12fe-4a57-af24-cce7ec5da62f",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id }}",
+        "text": "=Halo {{ $('Trigger: Telegram Chat').item.json.message?.from?.first_name || $('Trigger: Telegram Chat').item.json.callback_query?.from?.first_name }}! Silakan klik salah satu tombol di bawah ini untuk mengisi kehadiran hari ini:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Masuk",
+                    "additionalFields": {
+                      "callback_data": "absen_masuk"
+                    }
+                  },
+                  {
+                    "text": "Izin",
+                    "additionalFields": {
+                      "callback_data": "absen_izin"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        -224
+      ],
+      "id": "03f1e453-932f-49b4-a470-a5d7a43df63a",
+      "name": "Telegram: Petunjuk Absen",
+      "webhookId": "fefd691f-b918-4d65-af02-b6fb00d2929f",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id }}",
+        "text": "Anda memilih untuk Izin. Silakan ketik alasan tidak masuk Anda dengan format: Alasan: [Isi alasan Anda di sini] (Contoh: Alasan: Sakit Demam)",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        -48
+      ],
+      "id": "d1fca6be-1e29-4b7c-820b-35b1b4ae1e79",
+      "name": "Telegram: Form Izin/Sakit",
+      "webhookId": "8393c8a6-91b8-4a5c-8b64-a246837ac0dc",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $('Trigger: Telegram Chat').item.json.message?.text || '' }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "Anda adalah sistem validasi absensi otomatis perusahaan JadiMaju. Tugas Anda adalah memeriksa apakah alasan izin yang dimasukkan oleh karyawan layak, logis, dan profesional.  Aturan Penilaian: 1. Alasan yang LAYAK: Sakit, urusan keluarga, ban bocor/masalah kendaraan, keperluan mendesak, atau alasan pribadi yang sopan (misal: \"Ada urusan pribadi yang tidak bisa ditinggalkan\"). 2. Alasan yang TIDAK LAYAK: Malas, mager, mau main game, bangun kesiangan tanpa alasan jelas, atau teks asal-asalan (misal: \"asdasd\", \"test\", \"p\").  Format Output Anda HARUS dalam bentuk JSON seperti ini dan JANGAN memberikan teks penjelasan tambahan apa pun di luar JSON: {   \"status\": \"LOLOS\" atau \"DITOLAK\",   \"alasan_penolakan\": \"Tulis kalimat penolakan yang sopan jika status DITOLAK. Jika status LOLOS, kosongkan saja atau isi \\\"\\\"\" }  Berikut adalah teks alasan dari karyawan yang harus Anda periksa: {{ $json.message?.text }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        112
+      ],
+      "id": "86b4df10-723e-44be-b987-a08394d5c337",
+      "name": "Gemini: Ekstraktor Absen",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yMLGRHK5eWSOVRTN",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Trigger: Telegram Chat').item.json.message?.text || '' }}",
+        "options": {
+          "systemMessage": "Kamu adalah Agen AI internal untuk organisasi JadiMaju. Tugasmu membantu efisiensi kerja seperti merangkum teks, membuat draf email formal, dan menyusun rencana kerja. Jawab dengan profesional."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -288,
+        272
+      ],
+      "id": "a5331b13-84b6-41a6-8761-045292a1eb77",
+      "name": "Gemini: Agent Konsultasi HR",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse($json.content?.parts[0]?.text).status }}",
+                    "rightValue": "LOLOS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "86ddaf23-4df0-4e5b-935b-e106e547af2d"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        112
+      ],
+      "id": "ea5ff7cb-ede6-4874-8188-d9cb4c9acf2e",
+      "name": "Switch: Cek Validitas Data"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.from?.id }}",
+        "text": "=❌ Pengajuan izin Anda ditolak oleh sistem.\n\nAlasan Penolakan: {{ JSON.parse($json.output || $json.text || $json.content?.parts[0]?.text).alasan_penolakan }}\n\nSilakan ajukan kembali dengan alasan yang valid, jelas, dan profesional. Terima kasih.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        128
+      ],
+      "id": "9e3447a4-8c80-4f94-a6da-b6f7fd55ae57",
+      "name": "Telegram: Gagal Ekstraksi AI",
+      "webhookId": "c1d0ad76-0cc8-4aca-8be9-ba8e70f75a6f",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        272
+      ],
+      "id": "5016c94c-ada6-439e-b608-c3e0689b6046",
+      "name": "Telegram: Balasan Agent Chat",
+      "webhookId": "55c71d2f-1a02-466a-bdb8-baffe4f3924d",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ",
+          "mode": "list",
+          "cachedResultName": "Data_Absensi_Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Daftar Absensi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Keterangan / Alasan": "={{ $('Trigger: Telegram Chat').item.json.message?.text?.startsWith('Alasan:') ? $('Trigger: Telegram Chat').item.json.message.text.replace('Alasan:', '').trim() : '-' }}",
+            "Timestamp": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+            "Telegram ID": "={{ $('Trigger: Telegram Chat').item.json.message?.from?.id || $('Trigger: Telegram Chat').item.json.callback_query?.from?.id }}",
+            "Nama Karyawan": "={{ $('Trigger: Telegram Chat').item.json.message?.from?.first_name || $('Trigger: Telegram Chat').item.json.callback_query?.from?.first_name }}",
+            "Status Kehadiran": "={{ $('Trigger: Telegram Chat').item.json.callback_query?.data === 'absen_masuk' ? 'Masuk' : ($('Trigger: Telegram Chat').item.json.message?.text?.startsWith('Alasan:') ? 'Izin' : 'Masuk') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama Karyawan",
+              "displayName": "Nama Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status Kehadiran",
+              "displayName": "Status Kehadiran",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keterangan / Alasan",
+              "displayName": "Keterangan / Alasan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -112
+      ],
+      "id": "65d9fc43-1a64-4bea-b393-7bd936416955",
+      "name": "GSheets: Catat Kehadiran",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qXlHnoXu337mGj9T",
+          "name": "Google Sheets OAuth2 API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Status Kehadiran'] }}",
+                    "rightValue": "Masuk",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f831bb3b-6bdb-4923-b9a1-b1b64486f68f"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "879e99c6-b87d-4fbf-b9ec-62be52c7f2dd",
+                    "leftValue": "={{ $json['Status Kehadiran'] }}",
+                    "rightValue": "Izin",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        -112
+      ],
+      "id": "c3d2cd9d-ff8b-4a80-8a96-a7e5fbc16651",
+      "name": "Switch: Cek Status Masuk"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.message?.chat?.id || $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id }}",
+        "text": "=Terima kasih {{ $('Trigger: Telegram Chat').item.json.callback_query?.from?.first_name || $('Trigger: Telegram Chat').item.json.message?.from?.first_name }}, data pengajuan izin Anda telah berhasil dicatat. \n\nApakah ada yang ingin ditanyakan kepada Asisten AI hari ini?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        -16
+      ],
+      "id": "2d22a252-dd2d-40a2-ae13-b8392f711c6c",
+      "name": "Telegram: Sukses Catat Izin",
+      "webhookId": "e758fad1-6d2c-4741-988d-05abc47e7ee0",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger: Telegram Chat').item.json.callback_query?.message?.chat?.id || $('Trigger: Telegram Chat').item.json.message?.chat?.id }}",
+        "text": "=Selamat pagi, {{ $('Trigger: Telegram Chat').item.json.callback_query?.from?.first_name || $('Trigger: Telegram Chat').item.json.message?.from?.first_name }}! Absen masuk Anda berhasil dicatat. Selamat beraktivitas dan semangat menyelesaikan target hari ini! 👍. Ada yang ingin ditanyakan kepada Asisten AI hari ini?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        -208
+      ],
+      "id": "a6f55f66-5cab-4529-b78f-dad6f873cb3f",
+      "name": "Telegram: Sukses Catat Masuk",
+      "webhookId": "e758fad1-6d2c-4741-988d-05abc47e7ee0",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -960,
+        880
+      ],
+      "id": "ed1c4077-4f98-4725-8d7a-53bd4e49d041",
+      "name": "Cron: Setiap Jumat 17:00"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ",
+          "mode": "list",
+          "cachedResultName": "Data_Absensi_Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Daftar Absensi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -768,
+        880
+      ],
+      "id": "9a2e16db-09da-4fda-ab7b-04ca256b583a",
+      "name": "GSheets: Tarik Data Absensi",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qXlHnoXu337mGj9T",
+          "name": "Google Sheets OAuth2 API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "366477e3-275f-424d-9a2c-6a7faf68b806",
+              "leftValue": "={{ $json.Timestamp }}",
+              "rightValue": "={{ $now.minus({ days: 7 }) }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -576,
+        880
+      ],
+      "id": "a08c3d6f-ba0f-4450-a738-7bdf66652bf9",
+      "name": "Filter: Log 7 Hari Terakhir"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        880
+      ],
+      "id": "fe326771-adb4-4304-a9d7-10263961004b",
+      "name": "Data: Gabungkan Baris JSON"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Kamu adalah seorang Asisten AI Analis HRD profesional di perusahaan JadiMaju.\n\nBerikut ini adalah data mentah absensi karyawan selama satu minggu terakhir:\n{{ JSON.stringify($json.data) }}\n\nTolong lakukan analisis mendalam dan buatkan laporan ringkas..."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        880
+      ],
+      "id": "0d08a1a7-b3ab-424d-9e20-5276dba26ddd",
+      "name": "Gemini: Analis Laporan HRD",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yMLGRHK5eWSOVRTN",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "75b46007-4ee5-4402-b9a3-ec5581629cbf",
+              "leftValue": "={{ $('Gemini: Analis Laporan HRD').item?.json?.content?.parts?.[0]?.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        48,
+        880
+      ],
+      "id": "aaafedba-e266-4e26-91f6-805de09aa399",
+      "name": "Validation: Cek Status Error"
+    },
+    {
+      "parameters": {
+        "chatId": "=8350486397",
+        "text": "={{ $('Gemini: Analis Laporan HRD').first().json.content.parts[0].text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        784
+      ],
+      "id": "689d7c48-8720-4a4a-b86f-76de20d34d72",
+      "name": "Telegram: Kirim Laporan HRD",
+      "webhookId": "307da069-711d-4d5e-acf8-9eb129321394",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8350486397",
+        "text": "Sistem kami sedang mengalami pemeliharaan singkat. Data laporan mingguan Anda telah diantrekan dan akan segera diperbarui secara otomatis dalam beberapa menit.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        976
+      ],
+      "id": "2f5772e1-ff4d-435c-a722-dac76d25874b",
+      "name": "Telegram: Kirim Pesan Mitigasi",
+      "webhookId": "25fc2dd7-53ca-406e-834d-4a689846896a",
+      "credentials": {
+        "telegramApi": {
+          "id": "wo0orNs74pqchXib",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Gemini: Agent Konsultasi HR",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Menu Utama",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Petunjuk Absen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GSheets: Catat Kehadiran",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Form Izin/Sakit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gemini: Ekstraktor Absen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gemini: Agent Konsultasi HR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini: Agent Konsultasi HR",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Telegram Chat": {
+      "main": [
+        [
+          {
+            "node": "GSheets: Cek Akses Karyawan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GSheets: Cek Akses Karyawan": {
+      "main": [
+        [
+          {
+            "node": "Switch: Cek Registrasi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch: Cek Registrasi": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Notif Akses Ditolak",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Petunjuk Absen": {
+      "main": [
+        []
+      ]
+    },
+    "Gemini: Ekstraktor Absen": {
+      "main": [
+        [
+          {
+            "node": "Switch: Cek Validitas Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini: Agent Konsultasi HR": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Balasan Agent Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch: Cek Validitas Data": {
+      "main": [
+        [
+          {
+            "node": "GSheets: Catat Kehadiran",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Gagal Ekstraksi AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GSheets: Catat Kehadiran": {
+      "main": [
+        [
+          {
+            "node": "Switch: Cek Status Masuk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch: Cek Status Masuk": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Sukses Catat Masuk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Sukses Catat Izin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron: Setiap Jumat 17:00": {
+      "main": [
+        [
+          {
+            "node": "GSheets: Tarik Data Absensi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GSheets: Tarik Data Absensi": {
+      "main": [
+        [
+          {
+            "node": "Filter: Log 7 Hari Terakhir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Log 7 Hari Terakhir": {
+      "main": [
+        [
+          {
+            "node": "Data: Gabungkan Baris JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data: Gabungkan Baris JSON": {
+      "main": [
+        [
+          {
+            "node": "Gemini: Analis Laporan HRD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini: Analis Laporan HRD": {
+      "main": [
+        [
+          {
+            "node": "Validation: Cek Status Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation: Cek Status Error": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Kirim Laporan HRD",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Kirim Pesan Mitigasi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2ebb68f3-e5fa-4245-87a6-721ab3d38863",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "04717230ed0b595a0f9382a01c6a7eb28f4bf3a661aebb3f382c145265262798"
+  },
+  "id": "a5sEtLJTxftH7boC",
+  "tags": []
+}
