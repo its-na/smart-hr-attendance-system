@@ -68,7 +68,7 @@ Alur otomatisasi terjadwal yang mengolah data log kehadiran menjadi draf laporan
 ## 3. 📊 Database Structure (Google Sheets)
 Sistem ini menggunakan Google Sheets sebagai database dengan dua lembar kerja (sheets) utama yang dikonfigurasi secara relasional untuk efisiensi pengecekan data.
 
-💡 **Template Database Resmi:** [Salin Template Google Sheets Di Sini](https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit?usp=sharing) *(Silakan ganti tautan ini dengan link spreadsheet Anda)*
+💡 **Template Database Resmi:** [Salin Template Google Sheets Di Sini](https://docs.google.com/spreadsheets/d/1eGOo_fGpeERqaKo2QNR3uZ6aInpxoL7-7v6CBof82wQ/edit?usp=sharing)
 
 ### A. Sheet: Switch Cek Karyawan (Master Data)
 Digunakan oleh node GSheets: Cek Akses Karyawan untuk memvalidasi hak akses pengguna Telegram:
